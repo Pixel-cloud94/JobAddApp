@@ -9,11 +9,26 @@ use App\Http\Requests\UpdateJobRequest;
 class JobController extends Controller
 {
     /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        // Apply the CheckAdmin middleware to all methods in this controller
+        $this->middleware('checkAdmin');
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        // Fetch all jobs
+        $jobs = Job::all();
+
+        // Return view with jobs data
+        return view('jobs.index', compact('jobs'));
     }
 
     /**
@@ -21,7 +36,8 @@ class JobController extends Controller
      */
     public function create()
     {
-        //
+        // Return view for creating a new job
+        return view('jobs.create');
     }
 
     /**
@@ -29,7 +45,11 @@ class JobController extends Controller
      */
     public function store(StoreJobRequest $request)
     {
-        //
+        // Store the newly created job
+        Job::create($request->validated());
+
+        // Redirect to the index page
+        return redirect()->route('jobs.index');
     }
 
     /**
@@ -37,7 +57,8 @@ class JobController extends Controller
      */
     public function show(Job $job)
     {
-        //
+        // Return view with job data
+        return view('jobs.show', compact('job'));
     }
 
     /**
@@ -45,7 +66,8 @@ class JobController extends Controller
      */
     public function edit(Job $job)
     {
-        //
+        // Return view for editing a specific job
+        return view('jobs.edit', compact('job'));
     }
 
     /**
@@ -53,7 +75,11 @@ class JobController extends Controller
      */
     public function update(UpdateJobRequest $request, Job $job)
     {
-        //
+        // Update the specific job
+        $job->update($request->validated());
+
+        // Redirect to the index page
+        return redirect()->route('jobs.index');
     }
 
     /**
@@ -61,6 +87,10 @@ class JobController extends Controller
      */
     public function destroy(Job $job)
     {
-        //
+        // Delete the specific job
+        $job->delete();
+
+        // Redirect to the index page
+        return redirect()->route('jobs.index');
     }
 }
