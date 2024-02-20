@@ -16,18 +16,16 @@ class CategoryController extends Controller
     public function __construct()
     {
         // Apply the CheckAdmin middleware to all methods in this controller
-        $this->middleware('checkAdmin');
+        $this->middleware('admin');
     }
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function getCategory()
     {
-        // Retrieve all categories from the database
-        $categories = Category::all();
-        
-        // Return a view with the list of categories
-        return view('categories.index', compact('categories'));
+       
+        $companies = Category::all();
+        return view('adminboard', ('categories'));
     }
 
     /**

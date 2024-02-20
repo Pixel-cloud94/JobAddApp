@@ -13,16 +13,16 @@ class JobController extends Controller
      *
      * @return void
      */
-    public function __construct()
-    {
+  //  public function __construct()
+  //  {
         // Apply the CheckAdmin middleware to all methods in this controller
-        $this->middleware('checkAdmin');
-    }
+   //     $this->middleware('admin');
+   // }
 
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    /*public function index()
     {
         // Fetch all jobs
         $jobs = Job::all();
@@ -34,6 +34,33 @@ class JobController extends Controller
     /**
      * Show the form for creating a new resource.
      */
+
+    /**
+     * Display a listing of the resource.
+     */
+    /*public function index()
+    {
+        // Fetch all jobs
+        $jobs = Job::all();
+
+        // Output jobs to the console
+        foreach ($jobs as $job) {
+            echo "Job ID: " . $job->id . "\n";            
+            echo "Job Title: " . $job->name . "\n";
+            echo "Job Company: " . $job->company->name . "\n";
+            echo "Job Category: " . $job->category->name . "\n";
+            
+        }
+    }*/
+
+    public function index()
+    {
+        // Fetch all jobs with their related company and category
+        $jobs = Job::with('company', 'category')->get();
+
+        // Pass the jobs to the view
+        return view('adminboard', compact('jobs'));
+    }
     public function create()
     {
         // Return view for creating a new job
@@ -57,10 +84,10 @@ class JobController extends Controller
      */
     public function show(Job $job)
     {
-        // Return view with job data
-        return view('jobs.show', compact('job'));
+        // Return the job details
+        return response()->json($job);
     }
-
+    
     /**
      * Show the form for editing the specified resource.
      */
@@ -74,13 +101,13 @@ class JobController extends Controller
      * Update the specified resource in storage.
      */
     public function update(UpdateJobRequest $request, Job $job)
-    {
-        // Update the specific job
-        $job->update($request->validated());
+        {
+            // Update the specific job
+            $job->update($request->validated());
 
-        // Redirect to the index page
-        return redirect()->route('jobs.index');
-    }
+            // Return the updated job details
+            return response()->json($job);
+        }
 
     /**
      * Remove the specified resource from storage.

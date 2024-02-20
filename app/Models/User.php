@@ -25,7 +25,9 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
+        'image',
         'isAdmin',
+    
     ];
 
     /**
@@ -35,7 +37,6 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
-        'remember_token',
     ];
 
     /**
@@ -44,10 +45,7 @@ class User extends Authenticatable
      * @param  string  $value
      * @return void
      */
-    public function setPasswordAttribute($value)
-    {
-        $this->attributes['password'] = Hash::make($value);
-    }
+    
        
     public $timestamps = false;
 }

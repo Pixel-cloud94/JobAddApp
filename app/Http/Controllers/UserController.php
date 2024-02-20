@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Job;
+use App\Models\User;
 
 class UserController extends Controller
 {
@@ -11,49 +13,17 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::all();
-        return view('users.index', compact('users'));
-    }
+       $first_name = auth()->user()->first_name;
+       $image = auth()->user()->image;
+       $id =    auth()->user()->id;
+       
+       $jobs = Job::with('company', 'category')->get();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('users.create');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreUserRequest $request)
-    {   
-        if (!Auth::user()->isAdmin) {
-            $request->validate([
-                'username' => 'required|unique:users',
-                'password' => 'required'
-            ]);
-        }
-        else
-        {
-        $request->validate([
-            'username' => 'required|unique:users',
-            'password' => 'required',
-            'email' => 'required|email|unique:users',
-        ]);
-        }
         
-        $user = new User();
-        $user->username = $request->username;
-        $user->password = bcrypt($request->password);
-        $user->email = $request->email;
-        $user->save();
-
-        return redirect()->route('users.index')->with('success', 'User created successfully.');
+        return view('userboard', compact('jobs', 'first_name', 'image', 'id'));
     }
 
-    
-
+   
     /**
      * Display the specified resource.
      */
@@ -94,14 +64,22 @@ public function update(UpdateUserRequest $request, User $user)
     return redirect()->route('users.index')->with('success', 'User updated successfully.');
 }
 
+public function uploadImage(Request $request, User $user)
+{
+    $request->validate([
+        'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+    ]);
+
+    $imageName = time().'.'.$request->image->extension();   
+    $request->image->storeAs('public/images', $imageName);
+
+    $user->update(['image' => $imageName]);
+
+    return back()->with('success', 'You have successfully upload image.');
+}
 /**
  * Remove the specified resource from storage.
  */
-public function destroy(User $user)
-{
-    $user->delete();
 
-    return redirect()->route('users.index')->with('success', 'User deleted successfully.');
-}
 
 }

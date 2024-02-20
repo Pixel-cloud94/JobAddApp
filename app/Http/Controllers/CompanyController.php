@@ -16,18 +16,18 @@ class CompanyController extends Controller
     public function __construct()
     {
         // Apply the CheckAdmin middleware to all methods in this controller
-        $this->middleware('checkAdmin');
+        $this->middleware('admin');
     }
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function getCompany()
     {
-        // Fetch all companies
+       
         $companies = Company::all();
-
-        // Return view with companies data
-        return view('companies.index', compact('companies'));
+        return view('adminboard', ('companies'));
+        
+        
     }
 
     /**
